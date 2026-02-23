@@ -11,7 +11,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/example/devops-framework.git
+git clone https://github.com/kjenney/devops_framework.git
 cd devops-framework
 
 # Create and activate a virtual environment
