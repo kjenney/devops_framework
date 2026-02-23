@@ -46,6 +46,28 @@ def test_eks_help() -> None:
     assert result.exit_code == 0
 
 
+def test_list_clusters_empty() -> None:
+    with patch("devops_framework.cli.eks.ClusterClient") as MockCluster:
+        MockCluster.return_value.list_clusters.return_value = []
+        result = runner.invoke(app, ["eks", "list-clusters"])
+    assert result.exit_code == 0
+
+
+def test_list_clusters_with_data() -> None:
+    fake_cluster = {
+        "name": "my-cluster",
+        "status": "ACTIVE",
+        "version": "1.28",
+        "endpoint": "https://example.com",
+        "createdAt": "2024-01-01T00:00:00Z",
+    }
+    with patch("devops_framework.cli.eks.ClusterClient") as MockCluster:
+        MockCluster.return_value.list_clusters.return_value = [fake_cluster]
+        result = runner.invoke(app, ["eks", "list-clusters"])
+    assert result.exit_code == 0
+    assert "my-cluster" in result.output
+
+
 def test_list_pods_empty() -> None:
     with patch("devops_framework.cli.eks.PodClient") as MockPod:
         MockPod.return_value.list_pods.return_value = []

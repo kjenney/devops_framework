@@ -4,7 +4,41 @@
 devops eks [COMMAND] [OPTIONS]
 ```
 
-All EKS commands use the kubeconfig resolved from `KUBECONFIG` env var or `~/.devops-framework/config.yaml`. The default namespace is `default` unless overridden with `--namespace`.
+EKS commands fall into two categories:
+
+- **Cluster operations** (`list-clusters`): List EKS clusters in the AWS account. These use AWS credentials (region, profile).
+- **Kubernetes operations** (`list-pods`, `list-deployments`, etc.): Use the kubeconfig resolved from `KUBECONFIG` env var or `~/.devops-framework/config.yaml`. The default namespace is `default` unless overridden with `--namespace`.
+
+---
+
+## list-clusters
+
+List all EKS clusters in the AWS account.
+
+```
+devops eks list-clusters [OPTIONS]
+```
+
+| Option | Short | Type | Default | Description |
+|---|---|---|---|---|
+| `--region` | `-r` | text | config default | AWS region |
+| `--profile` | `-p` | text | config default | AWS profile name |
+
+**Examples**
+
+```bash
+# List all clusters in the default region
+devops eks list-clusters
+
+# List clusters in a specific region
+devops eks list-clusters --region eu-west-1
+
+# List clusters from a specific AWS profile
+devops eks list-clusters --profile production
+
+# Combine region and profile
+devops eks list-clusters -r us-west-2 -p staging
+```
 
 ---
 

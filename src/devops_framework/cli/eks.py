@@ -9,11 +9,12 @@ from rich.console import Console
 from rich.table import Table
 
 from devops_framework.core.exceptions import DevOpsFrameworkError
+from devops_framework.eks.clusters import ClusterClient
 from devops_framework.eks.deployments import DeploymentClient
 from devops_framework.eks.pods import PodClient
 from devops_framework.eks.services import ServiceClient
 
-app = typer.Typer(help="EKS/Kubernetes operations: pods, deployments, services.", no_args_is_help=True)
+app = typer.Typer(help="EKS operations: clusters, pods, deployments, services.", no_args_is_help=True)
 console = Console()
 err_console = Console(stderr=True, style="bold red")
 
@@ -21,6 +22,40 @@ err_console = Console(stderr=True, style="bold red")
 def _handle_error(exc: Exception) -> None:
     err_console.print(f"Error: {exc}")
     raise typer.Exit(code=1)
+
+
+# ── Clusters ───────────────────────────────────────────────────────────────────
+
+@app.command("list-clusters")
+def list_clusters(
+    region: Optional[str] = typer.Option(None, "--region", "-r", help="AWS region"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", help="AWS profile name"),
+) -> None:
+    """List all EKS clusters in the AWS account."""
+    try:
+        client = ClusterClient(region=region, profile=profile)
+        clusters = client.list_clusters()
+    except DevOpsFrameworkError as exc:
+        _handle_error(exc)
+        return
+
+    table = Table(title="EKS Clusters")
+    table.add_column("Cluster Name", style="cyan")
+    table.add_column("Status", style="green")
+    table.add_column("Kubernetes Version")
+    table.add_column("Endpoint")
+    table.add_column("Created")
+
+    for cluster in clusters:
+        table.add_row(
+            cluster.get("name", ""),
+            cluster.get("status", ""),
+            cluster.get("version", ""),
+            cluster.get("endpoint", ""),
+            str(cluster.get("createdAt", "")),
+        )
+
+    console.print(table)
 
 
 # ── Pods ──────────────────────────────────────────────────────────────────────

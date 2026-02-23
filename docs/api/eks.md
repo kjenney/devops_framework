@@ -1,12 +1,59 @@
 # EKS API Reference
 
-EKS clients authenticate via kubeconfig (file path from `KUBECONFIG` env var or config YAML). All three clients extend `EKSBaseClient`.
+EKS provides two types of clients:
+
+1. **Cluster operations** (`ClusterClient`): List EKS clusters using AWS API. Authenticates with AWS credentials.
+2. **Kubernetes operations** (Pod, Deployment, Service clients): Interact with Kubernetes resources. Authenticate via kubeconfig.
 
 ```python
+from devops_framework.eks.clusters import ClusterClient
 from devops_framework.eks.pods import PodClient
 from devops_framework.eks.deployments import DeploymentClient
 from devops_framework.eks.services import ServiceClient
 ```
+
+---
+
+## ClusterClient
+
+```python
+ClusterClient(region: str | None = None, profile: str | None = None, config: Config | None = None)
+```
+
+AWS EKS cluster client for listing and managing EKS clusters. Uses AWS API (boto3) for authentication.
+
+### Methods
+
+#### `list_clusters() -> list[dict]`
+
+Return all EKS clusters in the AWS account (paginated). Each cluster dict includes cluster name, ARN, status, Kubernetes version, and other metadata.
+
+```python
+client = ClusterClient(region="us-east-1", profile="production")
+clusters = client.list_clusters()
+
+for cluster in clusters:
+    print(f"{cluster['name']}: {cluster['status']}")
+    print(f"  Kubernetes version: {cluster['version']}")
+    print(f"  Endpoint: {cluster['endpoint']}")
+```
+
+#### `get_cluster(cluster_name) -> dict`
+
+Return a single cluster dict. Raises `ResourceNotFoundError` if not found.
+
+```python
+cluster = client.get_cluster("my-production-cluster")
+print(f"Cluster: {cluster['name']}")
+print(f"Status: {cluster['status']}")
+print(f"Version: {cluster['version']}")
+```
+
+---
+
+## Kubernetes Clients
+
+The following clients authenticate via kubeconfig and interact with Kubernetes resources within a cluster.
 
 ---
 
