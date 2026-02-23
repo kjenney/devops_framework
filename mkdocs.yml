@@ -1,0 +1,41 @@
+site_name: DevOps Framework
+site_description: Python library and CLI for DevOps troubleshooting (AWS, EKS, Datadog)
+repo_url: https://github.com/example/devops-framework
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Configuration: configuration.md
+  - CLI Reference:
+    - AWS: cli/aws.md
+    - EKS: cli/eks.md
+    - Datadog: cli/datadog.md
+  - API Reference:
+    - Core: api/core.md
+    - AWS: api/aws.md
+    - EKS: api/eks.md
+    - Datadog: api/datadog.md
+  - Examples:
+    - Troubleshoot EC2: examples/troubleshoot-ec2.md
+    - Manage Kubernetes: examples/manage-deployments.md
+    - Query Logs & Metrics: examples/query-logs.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - admonition
+  - toc:
+      permalink: true

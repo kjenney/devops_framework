@@ -1,0 +1,18 @@
+# DevOps Framework Configuration Example
+# Copy this file to ~/.devops-framework/config.yaml and fill in your values.
+# Environment variables take precedence over this file.
+
+aws:
+  region: us-east-1
+  # profile: default          # AWS CLI profile name (optional)
+  # role_arn: arn:aws:iam::123456789012:role/MyRole  # For role assumption (optional)
+
+eks:
+  # kubeconfig: ~/.kube/config  # Path to kubeconfig file (optional, default is ~/.kube/config)
+  # context: my-cluster         # Kubernetes context name (optional)
+  namespace: default
+
+datadog:
+  # api_key: your-dd-api-key    # Or set DD_API_KEY environment variable
+  # app_key: your-dd-app-key    # Or set DD_APP_KEY environment variable
+  site: datadoghq.com           # Datadog site (datadoghq.com, datadoghq.eu, etc.)
