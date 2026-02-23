@@ -58,6 +58,37 @@ datadog:
 !!! warning
     Avoid storing API keys in plain text. Prefer environment variables or a secrets manager.
 
+## AWS Profile Usage
+
+The AWS profile can be configured in three ways (in order of precedence):
+
+### 1. CLI Flag (Highest Priority)
+Pass the `--profile` or `-p` flag to any AWS command:
+
+```bash
+devops aws list-instances --profile production
+devops aws list-db-instances -p staging
+```
+
+### 2. Environment Variable
+Set the `AWS_PROFILE` environment variable:
+
+```bash
+export AWS_PROFILE=my-profile
+devops aws list-instances
+```
+
+### 3. Configuration File (Lowest Priority)
+Set the profile in `~/.devops-framework/config.yaml`:
+
+```yaml
+aws:
+  region: us-west-2
+  profile: my-default-profile
+```
+
+If no profile is specified, boto3 will use the default AWS profile.
+
 ## Using the Config Object Directly
 
 ```python

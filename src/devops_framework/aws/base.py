@@ -28,9 +28,12 @@ class AWSBaseClient(IntegrationBaseClient):
       env vars → ~/.aws/credentials → IAM instance role → etc.
     """
 
-    def __init__(self, region: str | None = None, config: Config | None = None) -> None:
+    def __init__(
+        self, region: str | None = None, profile: str | None = None, config: Config | None = None
+    ) -> None:
         super().__init__(config)
         self._region = region or self.config.aws_region
+        self._profile = profile or self.config.aws_profile
 
     @property
     def region(self) -> str:
@@ -39,8 +42,8 @@ class AWSBaseClient(IntegrationBaseClient):
     @cached_property
     def session(self) -> boto3.Session:
         kwargs: dict[str, Any] = {"region_name": self._region}
-        if self.config.aws_profile:
-            kwargs["profile_name"] = self.config.aws_profile
+        if self._profile:
+            kwargs["profile_name"] = self._profile
         try:
             return boto3.Session(**kwargs)
         except (BotoCoreError, Exception) as exc:

@@ -29,11 +29,12 @@ def _handle_error(exc: Exception) -> None:
 @app.command("list-instances")
 def list_instances(
     region: Optional[str] = typer.Option(None, "--region", "-r", help="AWS region"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", help="AWS profile name"),
     running_only: bool = typer.Option(False, "--running", help="Show only running instances"),
 ) -> None:
     """List EC2 instances."""
     try:
-        client = EC2Client(region=region)
+        client = EC2Client(region=region, profile=profile)
         instances = client.list_running_instances() if running_only else client.list_instances()
     except DevOpsFrameworkError as exc:
         _handle_error(exc)
@@ -66,10 +67,11 @@ def list_instances(
 def describe_instance(
     instance_id: str = typer.Argument(..., help="EC2 instance ID"),
     region: Optional[str] = typer.Option(None, "--region", "-r", help="AWS region"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", help="AWS profile name"),
 ) -> None:
     """Describe a single EC2 instance."""
     try:
-        client = EC2Client(region=region)
+        client = EC2Client(region=region, profile=profile)
         inst = client.get_instance(instance_id)
     except DevOpsFrameworkError as exc:
         _handle_error(exc)
@@ -83,10 +85,11 @@ def describe_instance(
 @app.command("list-db-instances")
 def list_db_instances(
     region: Optional[str] = typer.Option(None, "--region", "-r", help="AWS region"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", help="AWS profile name"),
 ) -> None:
     """List RDS DB instances."""
     try:
-        client = RDSClient(region=region)
+        client = RDSClient(region=region, profile=profile)
         instances = client.list_instances()
     except DevOpsFrameworkError as exc:
         _handle_error(exc)
@@ -118,10 +121,11 @@ def list_db_instances(
 @app.command("list-functions")
 def list_functions(
     region: Optional[str] = typer.Option(None, "--region", "-r", help="AWS region"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", help="AWS profile name"),
 ) -> None:
     """List Lambda functions."""
     try:
-        client = LambdaClient(region=region)
+        client = LambdaClient(region=region, profile=profile)
         functions = client.list_functions()
     except DevOpsFrameworkError as exc:
         _handle_error(exc)
@@ -150,6 +154,7 @@ def list_functions(
 def invoke_function(
     function_name: str = typer.Argument(..., help="Lambda function name or ARN"),
     region: Optional[str] = typer.Option(None, "--region", "-r", help="AWS region"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", help="AWS profile name"),
     payload: Optional[str] = typer.Option(None, "--payload", help="JSON payload string"),
 ) -> None:
     """Invoke a Lambda function synchronously."""
@@ -164,7 +169,7 @@ def invoke_function(
             raise typer.Exit(code=1)
 
     try:
-        client = LambdaClient(region=region)
+        client = LambdaClient(region=region, profile=profile)
         result = client.invoke(function_name, payload=parsed_payload)
     except DevOpsFrameworkError as exc:
         _handle_error(exc)
@@ -178,11 +183,12 @@ def invoke_function(
 @app.command("list-log-groups")
 def list_log_groups(
     region: Optional[str] = typer.Option(None, "--region", "-r", help="AWS region"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", help="AWS profile name"),
     prefix: Optional[str] = typer.Option(None, "--prefix", help="Log group name prefix filter"),
 ) -> None:
     """List CloudWatch Log groups."""
     try:
-        client = CloudWatchClient(region=region)
+        client = CloudWatchClient(region=region, profile=profile)
         groups = client.list_log_groups(prefix=prefix)
     except DevOpsFrameworkError as exc:
         _handle_error(exc)
